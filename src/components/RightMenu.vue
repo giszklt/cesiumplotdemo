@@ -66,8 +66,16 @@
               </el-form>
             </div>
           </div>
-          <div v-show="layerManagerShow">
-
+          <div class="demo-layerManage_tree" v-show="layerManagerShow">
+            <el-tree
+                :data="layerDisplayData"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                ref="layerDisplayTree"
+                highlight-current
+                :props="layerTreeDefaultProps">
+            </el-tree>
           </div>
         </div>
     </transition>
@@ -162,6 +170,41 @@ export default {
         inputHeight: [
           {validator: checkHeight, trigger: 'blur'}
         ]
+      },
+      layerDisplayData:[{
+        id: 1,
+        label: '影像图',
+        children: [{
+          id: 101,
+          label: '影像图1'
+        }, {
+          id: 102,
+          label: '影像图2'
+        }]
+      }, {
+        id: 2,
+        label: '矢量图',
+        children: [{
+          id: 201,
+          label: '矢量图1'
+        }, {
+          id: 202,
+          label: '矢量图2'
+        }]
+      }, {
+        id: 3,
+        label: '逻辑图',
+        children: [{
+          id: 301,
+          label: '逻辑图1'
+        }, {
+          id: 302,
+          label: '逻辑图2'
+        }]
+      }],
+      layerTreeDefaultProps: {
+        children: 'children',
+        label: 'label'
       }
     }
   },
@@ -316,6 +359,12 @@ export default {
       top: 10px;
       right: 10px;
       cursor: pointer;
+    }
+    .demo-layerManage_tree{
+      margin: 6px;
+      .el-tree{
+        border-radius: 5px;
+      }
     }
   }
 
