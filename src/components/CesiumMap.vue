@@ -104,13 +104,19 @@ export default {
       fullscreenButton: false,
       sceneMode: Cesium.SceneMode.SCENE3D,
       // 连接地图服务
-      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-        // url: window.mapUrl + ":9109/map/?z={z}&x={x}&y={y}",
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        tilingScheme: new Cesium.WebMercatorTilingScheme(),
-        maximumLevel: 7,
-        show: false
+      // imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+      //   // url: window.mapUrl + ":9109/map/?z={z}&x={x}&y={y}",
+      //   url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+      //   tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      //   maximumLevel: 7,
+      //   show: false
+      // }),
+      //本地单张地图
+      imageryProvider:new Cesium.SingleTileImageryProvider({
+        url:url,
+        // rectangle:rec
       })
+
     });
     // this.utils.transformTime(this, window.viewer); //时间转换
     // this.utils.setView(window.viewer);
