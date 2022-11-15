@@ -4,6 +4,8 @@ import {
 } from 'element-ui'
 import Vue from 'vue'
 
+axios.defaults.headers.post["Content-Type"] = "application/json;charset=utf-8";
+
 // create an axios instance
 const service = axios.create({
   baseURL: window.BASE_API, // url = base url + request url
