@@ -4,8 +4,9 @@
       <span>标绘功能演示</span>
     </div>
     <left-menu ref="leftMenu"></left-menu>
-    <right-menu ref="rightMenu"></right-menu>
-    <cesium-map @ready="mapCreated"></cesium-map>
+    <right-menu ref="rightMenu" @logicLayer="logicLayerCreated"></right-menu>
+    <cesium-map v-show="mapShow" @ready="mapCreated"></cesium-map>
+    <logic-map v-if="!mapShow"></logic-map>
   </div>
 </template>
 
@@ -21,19 +22,22 @@ import CesiumMap from "@/components/CesiumMap";
 import LeftMenu from "@/components/LeftMenu";
 import RightMenu from "@/components/RightMenu";
 // eslint-disable-next-line no-unused-vars
+import LogicMap from "@/components/LogicMap";
 
 
 let viewer = null;
 let plot = null;
 export default {
   name: 'mapPlot',
-  components: {RightMenu, LeftMenu, CesiumMap},
+  components: {RightMenu, LeftMenu, CesiumMap, LogicMap},
   props: {
     msg: String
   },
   //vue2写法
   data() {
-    return {}
+    return {
+      mapShow:true,
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -45,7 +49,11 @@ export default {
       viewer = e;
       this.$refs.leftMenu.viewer = e;
       this.$refs.rightMenu.viewer = e;
-    }
+    },
+    logicLayerCreated(logicLayer){
+      console.log('逻辑视图打开：',logicLayer);
+      this.mapShow = !logicLayer;
+    },
   }
 }
 </script>

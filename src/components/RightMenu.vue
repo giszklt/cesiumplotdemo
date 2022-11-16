@@ -74,7 +74,9 @@
                 node-key="id"
                 ref="layerDisplayTree"
                 highlight-current
-                :props="layerTreeDefaultProps">
+                :props="layerTreeDefaultProps"
+                :default-checked-keys="[101]"
+                @check="layerChange">
             </el-tree>
           </div>
         </div>
@@ -85,6 +87,7 @@
 <script>
 import * as Cesium from "../../public/Cesium/Cesium";
 import {isObject} from "@/utils/plot/utils/Utils";
+import mapLayerManage from "@/utils/layerManage.js"
 
 export default {
   name: "RightMenu",
@@ -176,36 +179,48 @@ export default {
         label: '影像图',
         children: [{
           id: 101,
-          label: '影像图1'
+          label: '基础图层',
+          disabled:true
         }, {
           id: 102,
-          label: '影像图2'
+          label: '影像图层1',
+        }, {
+          id: 103,
+          label: '影像图层2',
         }]
       }, {
         id: 2,
         label: '矢量图',
         children: [{
           id: 201,
-          label: '矢量图1'
+          label: '矢量图层1',
         }, {
           id: 202,
-          label: '矢量图2'
+          label: '矢量图层2',
         }]
       }, {
         id: 3,
         label: '逻辑图',
-        children: [{
-          id: 301,
-          label: '逻辑图1'
-        }, {
-          id: 302,
-          label: '逻辑图2'
-        }]
+        // children: [{
+        //   id: 301,
+        //   label: '逻辑图1'
+        // }, {
+        //   id: 302,
+        //   label: '逻辑图2'
+        // }]
       }],
       layerTreeDefaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      layerObj : {
+        101:null,
+        102:null,
+        103:null,
+        201:null,
+        202:null
+      },
+      zhujiLayer:null,
     }
   },
   methods: {
@@ -278,7 +293,40 @@ export default {
         this.viewer.scene.screenSpaceCameraController.enableZoom = false
         this.viewer.camera.flyTo(option)
       }
-    }
+    },
+    layerChange(nodeObj,status){
+      // console.log("obj:",nodeObj,"status:",status);
+      const currentKey = nodeObj.id;
+      const checkedKeys = status.checkedKeys;
+      if (checkedKeys.includes(currentKey)) {
+        const tempLayer = mapLayerManage.layerSelect(this.viewer,currentKey);
+        if (tempLayer) this.layerObj[currentKey] = tempLayer;
+      } else {
+        mapLayerManage.deleteLayer(this.viewer,this.layerObj[currentKey]);
+      }
+      if (currentKey === 1 || currentKey === 2) {
+        const layerObjKeys = Object.keys(this.layerObj);
+        const usedKeys = layerObjKeys.filter( ele => {return currentKey === 1 ? ele.startsWith('1') : ele.startsWith('2')});
+        if (checkedKeys.includes(currentKey)) {
+          usedKeys.forEach(item => {
+            this.layerObj[item] = mapLayerManage.layerSelect(this.viewer,Number(item));
+          });
+        } else {
+          usedKeys.forEach(item => {
+            mapLayerManage.deleteLayer(this.viewer,this.layerObj[item]);
+          });
+        }
+      }
+      if (currentKey === 3) {
+        if (checkedKeys.includes(currentKey)){
+          this.$emit("logicLayer", true);
+        } else {
+          this.$emit("logicLayer", false);
+        }
+
+      }
+    },
+
   },
   watch: {
     viewer() {
