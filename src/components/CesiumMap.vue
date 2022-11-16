@@ -64,17 +64,22 @@ export default {
       this.$refs.mapmenu.style.top = e.position.y + "px";
     },
     getLocationInfo() {
+      this.$notify.closeAll();
       let lon = this.moveLocation[0];
       let lat = this.moveLocation[1];
       this.mapMenuShow = false;
       getLocationInfo(lon, lat).then(response => {
-        console.log(response)
-        if (response.status == 200){
-          let data = response.data;
+        if (response.code == 200) {
+          let data = response.resp;
+          let name = response.info;
+          if (data) {
+            name = [data.cnName, data.prName, data.ctName, data.dtName].join("-")
+          }
           this.$notify({
-            title: data.name,
+            title: name,
             message: '经度：' + lon + "，纬度：" + lat,
-            position: 'bottom-left',
+            position: 'bottom-right',
+            offset: 20,
             duration: 0
           })
         }
@@ -85,7 +90,7 @@ export default {
     Cesium.Camera.DEFAULT_VIEW_FACTOR = 1.2;
     this.lastMouseX = -1
     this.lastMouseY = -1
-    document.oncontextmenu = function(){
+    document.oncontextmenu = function () {
       return false;
     }
     // const Cesium = this.Cesium

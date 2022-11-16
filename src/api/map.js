@@ -6,7 +6,7 @@ export function getLocationInfo(lon, lat) {
         "latitude": lat
     }
     return request({
-        url: `/regin/getDistricts`,
+        url: "/regin/getDistricts",
         method: 'post',
         data
     })
