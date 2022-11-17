@@ -201,13 +201,6 @@ export default {
       }, {
         id: 3,
         label: '逻辑图',
-        // children: [{
-        //   id: 301,
-        //   label: '逻辑图1'
-        // }, {
-        //   id: 302,
-        //   label: '逻辑图2'
-        // }]
       }],
       layerTreeDefaultProps: {
         children: 'children',
@@ -220,19 +213,36 @@ export default {
         201:null,
         202:null
       },
-      zhujiLayer:null,
+      viewIndexs:[0,0],
     }
   },
   methods: {
     switchView(index) {
       this.viewIndex = index;
+      this.viewIndexs.push(index);
+      let tempClickedKeys = this.$refs.layerDisplayTree.getCheckedKeys();
+      if (tempClickedKeys.includes(3)){
+        tempClickedKeys.splice(tempClickedKeys.indexOf(3), 1);
+      }
+      // debugger
       if (index == 0) {
-        this.viewer.scene.morphTo3D(0)
-      } else {
+        this.viewer.scene.morphTo3D(0);
+        this.$emit("logicLayer", false);
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
+      } else if (index == 1) {
         this.perspectiveShow = false;
         this.viewer.scene.screenSpaceCameraController.enableTranslate = true
         this.viewer.scene.screenSpaceCameraController.enableZoom = true
         this.viewer.scene.morphTo2D(0);
+        this.$emit("logicLayer", false);
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
+      } else {
+        //视图切换为逻辑图
+        this.$emit("logicLayer", true);
+        if (!tempClickedKeys.includes(3)) {
+          tempClickedKeys.push(3);
+        }
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
       }
     },
     closePanle() {
@@ -295,7 +305,6 @@ export default {
       }
     },
     layerChange(nodeObj,status){
-      // console.log("obj:",nodeObj,"status:",status);
       const currentKey = nodeObj.id;
       const checkedKeys = status.checkedKeys;
       if (checkedKeys.includes(currentKey)) {
@@ -317,13 +326,19 @@ export default {
           });
         }
       }
+      let viewLen = this.viewIndexs.length;
+      //图层管理-逻辑图
       if (currentKey === 3) {
         if (checkedKeys.includes(currentKey)){
           this.$emit("logicLayer", true);
+          this.switchView(2);
         } else {
           this.$emit("logicLayer", false);
+          this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
         }
-
+      } else {
+        this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
+        this.$emit("logicLayer", false);
       }
     },
 

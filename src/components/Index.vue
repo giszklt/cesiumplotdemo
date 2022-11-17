@@ -51,7 +51,7 @@ export default {
       this.$refs.rightMenu.viewer = e;
     },
     logicLayerCreated(logicLayer){
-      console.log('逻辑视图打开：',logicLayer);
+      // console.log('逻辑视图打开：',logicLayer);
       this.mapShow = !logicLayer;
     },
   }
