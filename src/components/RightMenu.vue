@@ -187,6 +187,9 @@ export default {
         }, {
           id: 103,
           label: '影像图层2',
+        }, {
+          id: 104,
+          label: '1:1100万',
         }]
       }, {
         id: 2,
@@ -197,6 +200,9 @@ export default {
         }, {
           id: 202,
           label: '矢量图层2',
+        }, {
+          id: 203,
+          label: '中国市边界',
         }]
       }, {
         id: 3,
@@ -206,14 +212,20 @@ export default {
         children: 'children',
         label: 'label'
       },
-      layerObj : {
-        101:null,
+      viewIndexs:[0,0],
+      OMSPrimitive:null,
+      customVector:null,
+      singleLayerLayer:null,
+      customAdministrationLayer:null,
+      mapLayersControl:{
+        // 101:null,
         102:null,
         103:null,
+        104:null,
         201:null,
-        202:null
-      },
-      viewIndexs:[0,0],
+        202:null,
+        203:null,
+      }
     }
   },
   methods: {
@@ -224,7 +236,6 @@ export default {
       if (tempClickedKeys.includes(3)){
         tempClickedKeys.splice(tempClickedKeys.indexOf(3), 1);
       }
-      // debugger
       if (index == 0) {
         this.viewer.scene.morphTo3D(0);
         this.$emit("logicLayer", false);
@@ -307,28 +318,55 @@ export default {
     layerChange(nodeObj,status){
       const currentKey = nodeObj.id;
       const checkedKeys = status.checkedKeys;
-      if (checkedKeys.includes(currentKey)) {
-        const tempLayer = mapLayerManage.layerSelect(this.viewer,currentKey);
-        if (tempLayer) this.layerObj[currentKey] = tempLayer;
-      } else {
-        mapLayerManage.deleteLayer(this.viewer,this.layerObj[currentKey]);
-      }
-      if (currentKey === 1 || currentKey === 2) {
-        const layerObjKeys = Object.keys(this.layerObj);
-        const usedKeys = layerObjKeys.filter( ele => {return currentKey === 1 ? ele.startsWith('1') : ele.startsWith('2')});
-        if (checkedKeys.includes(currentKey)) {
-          usedKeys.forEach(item => {
-            this.layerObj[item] = mapLayerManage.layerSelect(this.viewer,Number(item));
-          });
-        } else {
-          usedKeys.forEach(item => {
-            mapLayerManage.deleteLayer(this.viewer,this.layerObj[item]);
-          });
+      // debugger
+      if (currentKey === 203) {
+        if (this.mapLayersControl[currentKey]){
+          this.mapLayersControl[currentKey].show = !this.mapLayersControl[currentKey].show;
         }
+        return
       }
+      const changeVisible = ((viewer, layer) => {
+        if (Array.isArray(layer)) {
+          layer.forEach(item => {
+            viewer.imageryLayers.raiseToTop(item);
+            item.show = !item.show;
+          })
+        }
+      })
+      // debugger
+      if (this.mapLayersControl[currentKey]) {
+        changeVisible(this.viewer, this.mapLayersControl[currentKey]);
+      } else {
+        this.mapLayersControl[currentKey] = mapLayerManage.layerSelect(this.viewer,currentKey);
+        this.mapLayersControl[currentKey] && changeVisible(this.viewer, this.mapLayersControl[currentKey]);
+      }
+
+      //一级节点全选
+      if (currentKey === 1 || currentKey === 2) {
+        const layerObjKeys = Object.keys(this.mapLayersControl);
+        const usedKeys = layerObjKeys.filter( ele => {
+          return currentKey === 1 ? ele !== '1' && ele.startsWith('1') : ele !== '2' && ele.startsWith('2');
+        });
+        usedKeys.forEach(item => {
+          if (item === currentKey) return;
+          // debugger
+          if (item == 203){
+            if (this.mapLayersControl[item]){
+              this.mapLayersControl[item].show = !this.mapLayersControl[item].show;
+            }
+            return
+          }
+          if (this.mapLayersControl[item]) {
+            changeVisible(this.viewer, this.mapLayersControl[item]);
+          } else {
+            this.mapLayersControl[item] = mapLayerManage.layerSelect(this.viewer,item);
+            this.mapLayersControl[item] && changeVisible(this.viewer, this.mapLayersControl[item]);
+          }
+        });
+      }
+
       let viewLen = this.viewIndexs.length;
-      //图层管理-逻辑图
-      if (currentKey === 3) {
+      if (currentKey === 3) {//逻辑视图切换
         if (checkedKeys.includes(currentKey)){
           this.$emit("logicLayer", true);
           this.switchView(2);
@@ -351,7 +389,22 @@ export default {
         this.viewer.scene.morphTo2D(0);
       }
     }
-  }
+  },
+  mounted() {
+    let self = this;
+    // setTimeout(() => {
+    //   self.mapLayersControl[203] = mapLayerManage.addMunicipalityvector(self.viewer);
+    // },2000);
+    // setTimeout(() => {
+    //   self.mapLayersControl[104] = mapLayerManage.addAdministrationLayer1(self.viewer);
+    // },20000);
+    this.$nextTick(() => {
+      const mapLayerKeys = Object.keys(self.mapLayersControl);
+      mapLayerKeys.forEach(item => {
+        self.mapLayersControl[item] = mapLayerManage.layerSelect(self.viewer, Number(item));
+      })
+    });
+  },
 }
 </script>
 
