@@ -28,11 +28,4 @@ body,
 
 }
 
-.el-notification {
-  padding-right: 42px !important;
-}
-
-.el-notification .right {
-  right: 8px;
-}
 </style>

@@ -73,14 +73,15 @@ export default {
           let data = response.resp;
           let name = response.info;
           if (data) {
-            name = [data.cnName, data.prName, data.ctName, data.dtName].join("-")
+            name = [data.prName, data.ctName, data.dtName].join("-")
           }
           this.$notify({
             title: name,
             message: '经度：' + lon + "，纬度：" + lat,
             position: 'bottom-right',
             offset: 20,
-            duration: 0
+            duration: 0,
+            customClass:"demo-map_locationInfo"
           })
         }
       })
@@ -206,5 +207,12 @@ export default {
       min-width: 120px;
     }
   }
+}
+</style>
+<style>
+
+.demo-map_locationInfo{
+  padding-right: 42px !important;
+  right: 8px !important;
 }
 </style>
