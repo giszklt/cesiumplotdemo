@@ -116,8 +116,14 @@ export default {
         tilingScheme: new Cesium.WebMercatorTilingScheme(),
         maximumLevel: 7,
         show: false
-      })
+      }),
     });
+
+    // 将三维球定位到中国区域
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(103.84, 31.15, 133934127),
+    });
+
     // this.utils.transformTime(this, window.viewer); //时间转换
     // this.utils.setView(window.viewer);
     viewer.cesiumWidget.creditContainer.style.display = "none";
@@ -208,6 +214,7 @@ export default {
     }
   }
 }
+
 </style>
 <style>
 

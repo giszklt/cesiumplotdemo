@@ -66,8 +66,18 @@
               </el-form>
             </div>
           </div>
-          <div v-show="layerManagerShow">
-
+          <div class="demo-layerManage_tree" v-show="layerManagerShow">
+            <el-tree
+                :data="layerDisplayData"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                ref="layerDisplayTree"
+                highlight-current
+                :props="layerTreeDefaultProps"
+                :default-checked-keys="[101]"
+                @check="layerChange">
+            </el-tree>
           </div>
         </div>
     </transition>
@@ -77,6 +87,7 @@
 <script>
 import * as Cesium from "../../public/Cesium/Cesium";
 import {isObject} from "@/utils/plot/utils/Utils";
+import mapLayerManage from "@/utils/layerManage.js"
 
 export default {
   name: "RightMenu",
@@ -162,19 +173,87 @@ export default {
         inputHeight: [
           {validator: checkHeight, trigger: 'blur'}
         ]
+      },
+      layerDisplayData:[{
+        id: 1,
+        label: '影像图',
+        children: [{
+          id: 101,
+          label: '基础图层',
+          disabled:true
+        }, {
+          id: 102,
+          label: '影像图层1',
+        }, {
+          id: 103,
+          label: '影像图层2',
+        }, {
+          id: 104,
+          label: '1:1100万',
+        }]
+      }, {
+        id: 2,
+        label: '矢量图',
+        children: [{
+          id: 201,
+          label: '矢量图层1',
+        }, {
+          id: 202,
+          label: '矢量图层2',
+        }, {
+          id: 203,
+          label: '中国市边界',
+        }]
+      }, {
+        id: 3,
+        label: '逻辑图',
+      }],
+      layerTreeDefaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      viewIndexs:[0,0],
+      OMSPrimitive:null,
+      customVector:null,
+      singleLayerLayer:null,
+      customAdministrationLayer:null,
+      mapLayersControl:{
+        // 101:null,
+        102:null,
+        103:null,
+        104:null,
+        201:null,
+        202:null,
+        203:null,
       }
     }
   },
   methods: {
     switchView(index) {
       this.viewIndex = index;
+      this.viewIndexs.push(index);
+      let tempClickedKeys = this.$refs.layerDisplayTree.getCheckedKeys();
+      if (tempClickedKeys.includes(3)){
+        tempClickedKeys.splice(tempClickedKeys.indexOf(3), 1);
+      }
       if (index == 0) {
-        this.viewer.scene.morphTo3D(0)
-      } else {
+        this.viewer.scene.morphTo3D(0);
+        this.$emit("logicLayer", false);
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
+      } else if (index == 1) {
         this.perspectiveShow = false;
         this.viewer.scene.screenSpaceCameraController.enableTranslate = true
         this.viewer.scene.screenSpaceCameraController.enableZoom = true
         this.viewer.scene.morphTo2D(0);
+        this.$emit("logicLayer", false);
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
+      } else {
+        //视图切换为逻辑图
+        this.$emit("logicLayer", true);
+        if (!tempClickedKeys.includes(3)) {
+          tempClickedKeys.push(3);
+        }
+        this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
       }
     },
     closePanle() {
@@ -235,7 +314,72 @@ export default {
         this.viewer.scene.screenSpaceCameraController.enableZoom = false
         this.viewer.camera.flyTo(option)
       }
-    }
+    },
+    layerChange(nodeObj,status){
+      const currentKey = nodeObj.id;
+      const checkedKeys = status.checkedKeys;
+      // debugger
+      if (currentKey === 203) {
+        if (this.mapLayersControl[currentKey]){
+          this.mapLayersControl[currentKey].show = !this.mapLayersControl[currentKey].show;
+        }
+        return
+      }
+      const changeVisible = ((viewer, layer) => {
+        if (Array.isArray(layer)) {
+          layer.forEach(item => {
+            viewer.imageryLayers.raiseToTop(item);
+            item.show = !item.show;
+          })
+        }
+      })
+      // debugger
+      if (this.mapLayersControl[currentKey]) {
+        changeVisible(this.viewer, this.mapLayersControl[currentKey]);
+      } else {
+        this.mapLayersControl[currentKey] = mapLayerManage.layerSelect(this.viewer,currentKey);
+        this.mapLayersControl[currentKey] && changeVisible(this.viewer, this.mapLayersControl[currentKey]);
+      }
+
+      //一级节点全选
+      if (currentKey === 1 || currentKey === 2) {
+        const layerObjKeys = Object.keys(this.mapLayersControl);
+        const usedKeys = layerObjKeys.filter( ele => {
+          return currentKey === 1 ? ele !== '1' && ele.startsWith('1') : ele !== '2' && ele.startsWith('2');
+        });
+        usedKeys.forEach(item => {
+          if (item === currentKey) return;
+          // debugger
+          if (item == 203){
+            if (this.mapLayersControl[item]){
+              this.mapLayersControl[item].show = !this.mapLayersControl[item].show;
+            }
+            return
+          }
+          if (this.mapLayersControl[item]) {
+            changeVisible(this.viewer, this.mapLayersControl[item]);
+          } else {
+            this.mapLayersControl[item] = mapLayerManage.layerSelect(this.viewer,item);
+            this.mapLayersControl[item] && changeVisible(this.viewer, this.mapLayersControl[item]);
+          }
+        });
+      }
+
+      let viewLen = this.viewIndexs.length;
+      if (currentKey === 3) {//逻辑视图切换
+        if (checkedKeys.includes(currentKey)){
+          this.$emit("logicLayer", true);
+          this.switchView(2);
+        } else {
+          this.$emit("logicLayer", false);
+          this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
+        }
+      } else {
+        this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
+        this.$emit("logicLayer", false);
+      }
+    },
+
   },
   watch: {
     viewer() {
@@ -245,7 +389,22 @@ export default {
         this.viewer.scene.morphTo2D(0);
       }
     }
-  }
+  },
+  mounted() {
+    let self = this;
+    // setTimeout(() => {
+    //   self.mapLayersControl[203] = mapLayerManage.addMunicipalityvector(self.viewer);
+    // },2000);
+    // setTimeout(() => {
+    //   self.mapLayersControl[104] = mapLayerManage.addAdministrationLayer1(self.viewer);
+    // },20000);
+    this.$nextTick(() => {
+      const mapLayerKeys = Object.keys(self.mapLayersControl);
+      mapLayerKeys.forEach(item => {
+        self.mapLayersControl[item] = mapLayerManage.layerSelect(self.viewer, Number(item));
+      })
+    });
+  },
 }
 </script>
 
@@ -316,6 +475,12 @@ export default {
       top: 10px;
       right: 10px;
       cursor: pointer;
+    }
+    .demo-layerManage_tree{
+      margin: 6px;
+      .el-tree{
+        border-radius: 5px;
+      }
     }
   }
 
