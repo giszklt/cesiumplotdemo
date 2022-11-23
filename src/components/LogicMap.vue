@@ -38,6 +38,7 @@ export default {
         ],
         edges: [
           {source: 0, target: 1, label: ""},
+          {source: 1, target: 0, label: ""},
           {source: 0, target: 5, label: "正常"},
           {source: 0, target: 3, label: "正常"},
           {source: 1, target: 2, label: ""},

@@ -69,9 +69,9 @@ export default {
       let lat = this.moveLocation[1];
       this.mapMenuShow = false;
       getLocationInfo(lon, lat).then(response => {
+        let name = "非国内陆地区域";
         if (response.code == 200) {
           let data = response.resp;
-          let name = response.info;
           if (data) {
             name = [data.prName, data.ctName, data.dtName].join("-")
           }

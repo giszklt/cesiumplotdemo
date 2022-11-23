@@ -19,67 +19,69 @@
       </el-dropdown-menu>
     </el-dropdown>
     <el-tooltip content="视角切换" placement="bottom" v-show="viewIndex == 0">
-      <el-button circle size="small" class="demo-right_menuBtn" @click="perspectiveShow = !perspectiveShow; layerManagerShow=false;"
+      <el-button circle size="small" class="demo-right_menuBtn"
+                 @click="perspectiveShow = !perspectiveShow; layerManagerShow=false;"
                  :type="perspectiveShow ? 'primary' : ''">
         <div class="demo-right_menuItem"
              v-bind:style="{backgroundImage: 'url(' + require('../assets/icon/perspective.svg') + ')'}"></div>
       </el-button>
     </el-tooltip>
     <el-tooltip content="图层管理" placement="bottom">
-      <el-button circle size="small" class="demo-right_menuBtn" @click="layerManagerShow = !layerManagerShow; perspectiveShow=false;"
+      <el-button circle size="small" class="demo-right_menuBtn"
+                 @click="layerManagerShow = !layerManagerShow; perspectiveShow=false;"
                  :type="layerManagerShow ? 'primary' : ''">
         <div class="demo-right_menuItem"
              v-bind:style="{backgroundImage: 'url(' + require('../assets/icon/layermanager.svg') + ')'}"></div>
       </el-button>
     </el-tooltip>
     <transition name="el-zoom-in-top" size="mini">
-        <div class="demo-perspective_panel" v-show="perspectiveShow || layerManagerShow">
-          <i class="el-icon-close" @click="closePanle"></i>
-          <div v-show="perspectiveShow">
-            <el-radio-group v-model="selPerspective" size="mini" @change="changePerspective">
-              <el-radio-button v-for="(perspective, index) in perspectives" :label="perspective"></el-radio-button>
-            </el-radio-group>
-            <div class="demo-perspective_inputPanle" v-show="selPerspective != '太空' && selPerspective">
-              <el-form :model="perspectiveForm" status-icon :rules="rules" label-width="40px" size="mini" ref="perform">
-                <el-form-item label="经度" prop="inputLon">
-                  <el-input v-model="perspectiveForm.inputLon" placeholder="请输入经度" class="demo-perspective_input">
-                    <template slot="append">°</template>
-                  </el-input>
-                </el-form-item>
+      <div class="demo-perspective_panel" v-show="perspectiveShow || layerManagerShow">
+        <i class="el-icon-close" @click="closePanle"></i>
+        <div v-show="perspectiveShow">
+          <el-radio-group v-model="selPerspective" size="mini" @change="changePerspective">
+            <el-radio-button v-for="(perspective, index) in perspectives" :label="perspective"></el-radio-button>
+          </el-radio-group>
+          <div class="demo-perspective_inputPanle" v-show="selPerspective != '太空' && selPerspective">
+            <el-form :model="perspectiveForm" status-icon :rules="rules" label-width="40px" size="mini" ref="perform">
+              <el-form-item label="经度" prop="inputLon">
+                <el-input v-model="perspectiveForm.inputLon" placeholder="请输入经度" class="demo-perspective_input">
+                  <template slot="append">°</template>
+                </el-input>
+              </el-form-item>
 
-                <el-form-item label="纬度" prop="inputLat">
+              <el-form-item label="纬度" prop="inputLat">
 
-                  <el-input v-model="perspectiveForm.inputLat" placeholder="请输入纬度" class="demo-perspective_input">
-                    <template slot="append">°</template>
-                  </el-input>
+                <el-input v-model="perspectiveForm.inputLat" placeholder="请输入纬度" class="demo-perspective_input">
+                  <template slot="append">°</template>
+                </el-input>
 
-                </el-form-item>
+              </el-form-item>
 
-                <el-form-item label="高度" prop="inputHeight" v-if="selPerspective == '参照物'">
-                  <el-input v-model="perspectiveForm.inputHeight" size="mini" placeholder="请输入高度"
-                            class="demo-perspective_input">
-                    <template slot="append">m</template>
-                  </el-input>
-                </el-form-item>
+              <el-form-item label="高度" prop="inputHeight" v-if="selPerspective == '参照物'">
+                <el-input v-model="perspectiveForm.inputHeight" size="mini" placeholder="请输入高度"
+                          class="demo-perspective_input">
+                  <template slot="append">m</template>
+                </el-input>
+              </el-form-item>
 
-                <el-button size="mini" @click="changePerspective" style="margin-top: 5px">确认</el-button>
-              </el-form>
-            </div>
-          </div>
-          <div class="demo-layerManage_tree" v-show="layerManagerShow">
-            <el-tree
-                :data="layerDisplayData"
-                show-checkbox
-                default-expand-all
-                node-key="id"
-                ref="layerDisplayTree"
-                highlight-current
-                :props="layerTreeDefaultProps"
-                :default-checked-keys="[101]"
-                @check="layerChange">
-            </el-tree>
+              <el-button size="mini" @click="changePerspective" style="margin-top: 5px">确认</el-button>
+            </el-form>
           </div>
         </div>
+        <div class="demo-layerManage_tree" v-show="layerManagerShow">
+          <el-tree
+              :data="layerDisplayData"
+              show-checkbox
+              default-expand-all
+              node-key="id"
+              ref="layerDisplayTree"
+              highlight-current
+              :props="layerTreeDefaultProps"
+              :default-checked-keys="[101]"
+              @check="layerChange">
+          </el-tree>
+        </div>
+      </div>
     </transition>
   </div>
 </template>
@@ -174,13 +176,13 @@ export default {
           {validator: checkHeight, trigger: 'blur'}
         ]
       },
-      layerDisplayData:[{
+      layerDisplayData: [{
         id: 1,
         label: '影像图',
         children: [{
           id: 101,
           label: '基础图层',
-          disabled:true
+          // disabled:true
         }, {
           id: 102,
           label: '影像图层1',
@@ -212,19 +214,19 @@ export default {
         children: 'children',
         label: 'label'
       },
-      viewIndexs:[0,0],
-      OMSPrimitive:null,
-      customVector:null,
-      singleLayerLayer:null,
-      customAdministrationLayer:null,
-      mapLayersControl:{
+      viewIndexs: [0, 0],
+      OMSPrimitive: null,
+      customVector: null,
+      singleLayerLayer: null,
+      customAdministrationLayer: null,
+      mapLayersControl: {
         // 101:null,
-        102:null,
-        103:null,
-        104:null,
-        201:null,
-        202:null,
-        203:null,
+        102: null,
+        103: null,
+        104: null,
+        201: null,
+        202: null,
+        203: null,
       }
     }
   },
@@ -233,7 +235,7 @@ export default {
       this.viewIndex = index;
       this.viewIndexs.push(index);
       let tempClickedKeys = this.$refs.layerDisplayTree.getCheckedKeys();
-      if (tempClickedKeys.includes(3)){
+      if (tempClickedKeys.includes(3)) {
         tempClickedKeys.splice(tempClickedKeys.indexOf(3), 1);
       }
       if (index == 0) {
@@ -315,12 +317,12 @@ export default {
         this.viewer.camera.flyTo(option)
       }
     },
-    layerChange(nodeObj,status){
+    layerChange(nodeObj, status) {
       const currentKey = nodeObj.id;
       const checkedKeys = status.checkedKeys;
       // debugger
       if (currentKey === 203) {
-        if (this.mapLayersControl[currentKey]){
+        if (this.mapLayersControl[currentKey]) {
           this.mapLayersControl[currentKey].show = !this.mapLayersControl[currentKey].show;
         }
         return
@@ -337,21 +339,21 @@ export default {
       if (this.mapLayersControl[currentKey]) {
         changeVisible(this.viewer, this.mapLayersControl[currentKey]);
       } else {
-        this.mapLayersControl[currentKey] = mapLayerManage.layerSelect(this.viewer,currentKey);
+        this.mapLayersControl[currentKey] = mapLayerManage.layerSelect(this.viewer, currentKey);
         this.mapLayersControl[currentKey] && changeVisible(this.viewer, this.mapLayersControl[currentKey]);
       }
 
       //一级节点全选
       if (currentKey === 1 || currentKey === 2) {
         const layerObjKeys = Object.keys(this.mapLayersControl);
-        const usedKeys = layerObjKeys.filter( ele => {
+        const usedKeys = layerObjKeys.filter(ele => {
           return currentKey === 1 ? ele !== '1' && ele.startsWith('1') : ele !== '2' && ele.startsWith('2');
         });
         usedKeys.forEach(item => {
           if (item === currentKey) return;
           // debugger
-          if (item == 203){
-            if (this.mapLayersControl[item]){
+          if (item == 203) {
+            if (this.mapLayersControl[item]) {
               this.mapLayersControl[item].show = !this.mapLayersControl[item].show;
             }
             return
@@ -359,7 +361,7 @@ export default {
           if (this.mapLayersControl[item]) {
             changeVisible(this.viewer, this.mapLayersControl[item]);
           } else {
-            this.mapLayersControl[item] = mapLayerManage.layerSelect(this.viewer,item);
+            this.mapLayersControl[item] = mapLayerManage.layerSelect(this.viewer, item);
             this.mapLayersControl[item] && changeVisible(this.viewer, this.mapLayersControl[item]);
           }
         });
@@ -367,15 +369,15 @@ export default {
 
       let viewLen = this.viewIndexs.length;
       if (currentKey === 3) {//逻辑视图切换
-        if (checkedKeys.includes(currentKey)){
+        if (checkedKeys.includes(currentKey)) {
           this.$emit("logicLayer", true);
           this.switchView(2);
         } else {
           this.$emit("logicLayer", false);
-          this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
+          this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] : this.viewIndexs[viewLen - 1]);
         }
       } else {
-        this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] :this.viewIndexs[viewLen - 1]);
+        this.switchView(this.viewIndexs[viewLen - 1] === 2 ? this.viewIndexs[viewLen - 2] : this.viewIndexs[viewLen - 1]);
         this.$emit("logicLayer", false);
       }
     },
@@ -476,9 +478,15 @@ export default {
       right: 10px;
       cursor: pointer;
     }
-    .demo-layerManage_tree{
+
+    .el-tree {
+      background: none;
+    }
+
+    .demo-layerManage_tree {
       margin: 6px;
-      .el-tree{
+
+      .el-tree {
         border-radius: 5px;
       }
     }
