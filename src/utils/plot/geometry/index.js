@@ -27,8 +27,10 @@ import TailedSquadCombat from "./arrow/TailedSquadCombat";
 import RectFlag from "./flag/RectFlag";
 import TriangleFlag from "./flag/TriangleFlag";
 import CurveFlag from "./flag/CurveFlag";
-/** 
-import Pennant from "./Point/Pennant";
+import Radar from "./point/Radar"
+import Picture from "./point/Picture";
+/**
+ import Pennant from "./Point/Pennant";
 
 
 
@@ -42,49 +44,51 @@ import Pennant from "./Point/Pennant";
 
 
 
-import PlotTextBox from "./Text/PlotTextBox";
-*/
+ import PlotTextBox from "./Text/PlotTextBox";
+ */
 export {
-  Point,
-  Polyline,
-  Curve,
-  Arc,
-  Circle,
-  FreeHandLine,
-  RectAngle,
-  Ellipse,
-  Lune,
-  Sector,
-  ClosedCurve,
-  Polygon,
-  FreePolygon,
-  GatheringPlace,
-  DoubleArrow,
-  StraightArrow,
-  FineArrow,
-  AttackArrow,
-  AssaultDirection,
-  TailedAttackArrow,
-  SquadCombat,
-  TailedSquadCombat,
-  RectFlag,
-  TriangleFlag,
-  CurveFlag,
-  /** 
-  Pennant,
-  
-  
-  
-  
-  
- 
-  
-  
-  
-  
-  
-  
+    Point,
+    Polyline,
+    Curve,
+    Arc,
+    Circle,
+    FreeHandLine,
+    RectAngle,
+    Ellipse,
+    Lune,
+    Sector,
+    ClosedCurve,
+    Polygon,
+    FreePolygon,
+    GatheringPlace,
+    DoubleArrow,
+    StraightArrow,
+    FineArrow,
+    AttackArrow,
+    AssaultDirection,
+    TailedAttackArrow,
+    SquadCombat,
+    TailedSquadCombat,
+    RectFlag,
+    TriangleFlag,
+    CurveFlag,
+    Radar,
+    Picture
+    /**
+     Pennant,
 
-  PlotTextBox
-  */
+
+
+
+
+
+
+
+
+
+
+
+
+     PlotTextBox
+     */
 };

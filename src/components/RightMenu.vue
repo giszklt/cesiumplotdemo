@@ -35,9 +35,9 @@
       </el-button>
     </el-tooltip>
     <transition name="el-zoom-in-top" size="mini">
-      <div class="demo-perspective_panel" v-show="perspectiveShow || layerManagerShow">
+      <div class="demo-right_panel" v-show="perspectiveShow || layerManagerShow">
         <i class="el-icon-close" @click="closePanle"></i>
-        <div v-show="perspectiveShow">
+        <div v-show="perspectiveShow" class="demo-perspective_panel">
           <el-radio-group v-model="selPerspective" size="mini" @change="changePerspective">
             <el-radio-button v-for="(perspective, index) in perspectives" :label="perspective"></el-radio-button>
           </el-radio-group>
@@ -68,7 +68,7 @@
             </el-form>
           </div>
         </div>
-        <div class="demo-layerManage_tree" v-show="layerManagerShow">
+        <div class="demo-layerManage_tree" v-show="layerManagerShow" v-if="false">
           <el-tree
               :data="layerDisplayData"
               show-checkbox
@@ -185,12 +185,6 @@ export default {
           // disabled:true
         }, {
           id: 102,
-          label: '影像图层1',
-        }, {
-          id: 103,
-          label: '影像图层2',
-        }, {
-          id: 104,
           label: '1:1100万',
         }]
       }, {
@@ -198,12 +192,9 @@ export default {
         label: '矢量图',
         children: [{
           id: 201,
-          label: '矢量图层1',
-        }, {
-          id: 202,
           label: '矢量图层2',
         }, {
-          id: 203,
+          id: 202,
           label: '中国市边界',
         }]
       }, {
@@ -401,6 +392,7 @@ export default {
     //   self.mapLayersControl[104] = mapLayerManage.addAdministrationLayer1(self.viewer);
     // },20000);
     this.$nextTick(() => {
+      return
       const mapLayerKeys = Object.keys(self.mapLayersControl);
       mapLayerKeys.forEach(item => {
         self.mapLayersControl[item] = mapLayerManage.layerSelect(self.viewer, Number(item));
@@ -438,7 +430,7 @@ export default {
     margin-left: 7px;
   }
 
-  .demo-perspective_panel {
+  .demo-right_panel {
     position: absolute;
     right: 10px;
     z-index: 1;
@@ -446,31 +438,32 @@ export default {
     padding: 20px;
     border-radius: 5px;
     top: 70px;
-    width: 250px;
+    width: auto;
     text-align: center;
+    .demo-perspective_panel{
+      width: 250px;
+      .demo-perspective_inputPanle {
+        width: 180px;
+        margin: 5px auto;
 
-    .demo-perspective_inputPanle {
-      width: 180px;
-      margin: 5px auto;
+        .el-form-item {
+          margin-bottom: 12px !important;
+        }
 
-      .el-form-item {
-        margin-bottom: 12px !important;
-      }
+        ::v-deep(.el-form-item__label) {
+          line-height: 38px;
+        }
 
-      ::v-deep(.el-form-item__label) {
-        line-height: 38px;
-      }
+        .demo-perspective_input {
+          margin: 5px 0;
 
-      .demo-perspective_input {
-        margin: 5px 0;
-
-        ::v-deep(.el-input-group__append) {
-          padding: 0 10px;
-          width: 32px;
+          ::v-deep(.el-input-group__append) {
+            padding: 0 10px;
+            width: 32px;
+          }
         }
       }
     }
-
     .el-icon-close {
       font-size: 16px;
       position: absolute;
@@ -488,6 +481,9 @@ export default {
 
       .el-tree {
         border-radius: 5px;
+        .el-tree-node__expand-icon{
+          display: none;
+        }
       }
     }
   }

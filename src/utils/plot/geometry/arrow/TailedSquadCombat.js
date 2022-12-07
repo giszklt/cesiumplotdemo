@@ -17,6 +17,7 @@ class TailedSquadCombat extends AttackArrow {
     this.neckHeightFactor = 0.85;
     this.neckWidthFactor = 0.15;
     this.tailWidthFactor = 0.1;
+    this.fixPointCount = 2;
     this.swallowTailFactor = 1;
     this.swallowTailPnt = null;
     if (points && points.length > 0) {

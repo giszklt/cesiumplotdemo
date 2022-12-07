@@ -3,9 +3,9 @@
     <div class="demo-title_panel">
       <span>标绘功能演示</span>
     </div>
-    <left-menu ref="leftMenu"></left-menu>
+    <left-menu ref="leftMenu" @drawPlot="noticeDrawPlot"></left-menu>
     <right-menu ref="rightMenu" @logicLayer="logicLayerCreated"></right-menu>
-    <cesium-map v-show="mapShow" @ready="mapCreated"></cesium-map>
+    <cesium-map ref="cesiumMap" v-show="mapShow" @ready="mapCreated"></cesium-map>
     <logic-map v-if="!mapShow"></logic-map>
   </div>
 </template>
@@ -41,7 +41,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.init();
     })
   },
   methods: {
@@ -54,6 +53,9 @@ export default {
       // console.log('逻辑视图打开：',logicLayer);
       this.mapShow = !logicLayer;
     },
+    noticeDrawPlot(drawPlot){
+      this.$refs.cesiumMap.isDraw = drawPlot
+    }
   }
 }
 </script>

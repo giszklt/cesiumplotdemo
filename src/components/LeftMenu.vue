@@ -16,17 +16,17 @@
     </transition>
     <transition name="el-zoom-in-top">
       <div class="demo-menu_panel demo-update_panel" v-show="selIndex == 1">
-<!--        <el-upload-->
-<!--            class="upload-demo"-->
-<!--            :on-preview="handlePreview"-->
-<!--            :on-remove="handleRemove"-->
-<!--            :before-remove="beforeRemove"-->
-<!--            :on-change="changeFile"-->
-<!--            :file-list="fileList"-->
-<!--            :show-file-list="false"-->
-<!--            :auto-upload="false">-->
-<!--          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
-<!--        </el-upload>-->
+        <!--        <el-upload-->
+        <!--            class="upload-demo"-->
+        <!--            :on-preview="handlePreview"-->
+        <!--            :on-remove="handleRemove"-->
+        <!--            :before-remove="beforeRemove"-->
+        <!--            :on-change="changeFile"-->
+        <!--            :file-list="fileList"-->
+        <!--            :show-file-list="false"-->
+        <!--            :auto-upload="false">-->
+        <!--          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
+        <!--        </el-upload>-->
       </div>
     </transition>
   </div>
@@ -34,130 +34,160 @@
 
 <script>
 import * as Cesium from "../../public/Cesium/Cesium";
+import CesiumPlot from "@/utils/plot/index";
 import * as Utils from "@/utils/plot/utils/Utils";
+import {Point} from "@/utils/plot/geometry";
 
+let plotTool = null;
 export default {
   name: "LeftMenu",
   data() {
     return {
       navs: ["标绘", "态势导入", "行动推演"],
-      viewer:null,
+      viewer: null,
       plots: [
+        //     {
+        //   name: "点",
+        //   fun: "Point",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "线",
+        //   fun: "Polyline",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "曲线",
+        //   fun: "Curve",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "弓形线",
+        //   fun: "Arc",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "圆",
+        //   fun: "Circle",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "自由线",
+        //   fun: "FreeHandLine",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "矩形",
+        //   fun: "RectAngle",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "椭圆",
+        //   fun: "Ellipse",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "弓型面",
+        //   fun: "Lune",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "扇形",
+        //   fun: "Sector",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "闭合曲面",
+        //   fun: "ClosedCurve",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "多边形",
+        //   fun: "Polygon",
+        //   url: require('../assets/icon/arrow.svg')
+        // }, {
+        //   name: "自由面",
+        //   fun: "FreePolygon",
+        //   url: require('../assets/icon/arrow.svg')
+        // },
+        //   {
+        //     name: "细直箭头",
+        //     fun: "StraightArrow",
+        //     url: require('../assets/icon/arrow.svg')
+        //   },{
+        //     name: "粗单直箭头",
+        //     fun: "AssaultDirection",
+        //     url: require('../assets/icon/arrow.svg')
+        //   }, {
+        //     name: "粗单尖头箭头",
+        //     fun: "FineArrow",
+        //     url: require('../assets/icon/arrow.svg')
+        //   },
+        //   {
+        //     name: "飞行轨迹",
+        //     fun: "fly",
+        //     custom: true,
+        //     url: require('../assets/icon/arrow.svg')
+        //   },
         {
-          name: "点",
-          fun: "Point",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "线",
-          fun: "Polyline",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "曲线",
-          fun: "Curve",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "弓形线",
-          fun: "Arc",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "圆",
-          fun: "Circle",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "自由线",
-          fun: "FreeHandLine",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "矩形",
-          fun: "RectAngle",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "椭圆",
-          fun: "Ellipse",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "弓型面",
-          fun: "Lune",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "扇形",
-          fun: "Sector",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "闭合曲面",
-          fun: "ClosedCurve",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "多边形",
-          fun: "Polygon",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "自由面",
-          fun: "FreePolygon",
-          url: require('../assets/icon/arrow.svg')
-        }, {
           name: "集结地",
           fun: "GatheringPlace",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/GatheringPlace.svg')
         }, {
           name: "钳击",
           fun: "DoubleArrow",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "细直箭头",
-          fun: "StraightArrow",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "粗单尖头箭头",
-          fun: "FineArrow",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/DoubleArrow.svg')
         }, {
           name: "进攻方向",
           fun: "AttackArrow",
-          url: require('../assets/icon/arrow.svg')
-        }, {
-          name: "粗单直箭头",
-          fun: "AssaultDirection",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/AttackArrow.svg')
         }, {
           name: "进攻方向(尾)",
           fun: "TailedAttackArrow",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/TailedAttackArrow.svg')
         }, {
           name: "分队战斗行动",
           fun: "SquadCombat",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/AttackArrow.svg')
         }, {
           name: "分队战斗行动(尾)",
           fun: "TailedSquadCombat",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/TailedAttackArrow.svg')
         }, {
           name: "矩形标志旗",
           fun: "RectFlag",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/RectFlag.svg')
         }, {
           name: "三角标志旗",
           fun: "TriangleFlag",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/TriangleFlag.svg')
         }, {
           name: "曲线标志旗",
           fun: "CurveFlag",
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/CurveFlag.svg')
         }, {
-          name: "飞行轨迹",
-          fun: "fly",
-          custom: true,
-          url: require('../assets/icon/arrow.svg')
+          name: "坦克",
+          fun: "tiger",
+          size: 100,
+          url: require('../assets/icon/tiger.svg')
         }, {
-          name: "地空目标",
-          fun: "GroundLinkSky",
-          custom: true,
-          url: require('../assets/icon/arrow.svg')
+          name: "战机",
+          fun: "fighter",
+          size: 100,
+          url: require('../assets/icon/fighter.svg')
         }, {
+          name: "雷达探测",
+          fun: "Radar",
+          url: require('../assets/icon/Radar.svg')
+        }, {
+          name: "雷达扫描",
+          fun: "RadarScan",
+          url: require('../assets/icon/RadarScan.svg')
+        },{
+          name: "图片演示",
+          fun: "Picture",
+          url: require('../assets/icon/Picture.svg')
+        },
+        //   {
+        //   name: "地空目标",
+        //   fun: "GroundLinkSky",
+        //   custom: true,
+        //   url: require('../assets/icon/TailedAttackArrow.svg')
+        // },
+        {
           name: "清空内容",
           fun: "clearAll",
           custom: true,
-          url: require('../assets/icon/arrow.svg')
+          url: require('../assets/icon/clearAll.svg')
         }],
       fileList: [],
       selIndex: null,
@@ -227,16 +257,24 @@ export default {
 
     }
   },
+  watch: {
+    viewer() {
+      plotTool = new CesiumPlot(this.viewer, {
+        zoomToExtent: false
+      });
+    }
+  },
   methods: {
     openMenu(index) {
       this.selIndex = index
     },
-    closeMenu(){
+    closeMenu() {
       this.selIndex = null
     },
     drawPlot(fun) {
       this.selFun = fun.fun;
       let self = this;
+      const viewer = this.viewer
       if (fun.custom) {
         if (fun.fun == 'fly') {
           let points = [
@@ -457,9 +495,42 @@ export default {
           self.selFun = null;
         }
       } else {
-        plot.plotDraw.active(fun.fun, {}, function (data) {
+        this.$emit("drawPlot", true);
+        let plotType = fun.fun;
+        let params = {};
+        if (plotType == 'Radar' || plotType == 'RadarScan') {
+          params = {
+            name: "ld",
+            isRadar: true,
+            radarType: plotType == 'Radar' ? 3 : 2,
+            modelUrl: "./model/station.glb",
+            scale: 0.2,
+            viewer: viewer,
+            radarColor: new Cesium.Color(1, 0, 0)
+          }
+          plotType = "Radar"
+        }
+        if (plotType == 'tiger' || plotType == 'fighter') {
+          params = {
+            name: plotType,
+            isRadar: true,
+            modelUrl: "./model/" + plotType + ".glb",
+            scale: fun.size,
+            ads: plotType == 'fighter' ? 5000 : false
+          }
+          plotType = "Radar"
+        }
+        if (plotType == 'Picture'){
+          params = {
+            name: plotType,
+            imgUrl: "./static/img.png",
+            scale: 5
+          }
+        }
+        plotTool.plotDraw.active(plotType, params, function (data) {
           if (data == 1) {
             self.selFun = null;
+            self.$emit("drawPlot", false);
           }
         })
       }
@@ -503,7 +574,7 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     }
-  }
+  },
 }
 </script>
 

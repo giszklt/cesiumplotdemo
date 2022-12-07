@@ -17,7 +17,7 @@ class DoubleArrow {
     this.neckWidthFactor = 0.15;
     this.connPoint = null;
     this.tempPoint4 = null;
-    this.fixPointCount = 4;
+    this.fixPointCount = 3;
     this.options = params || {};
     // 动态绘制点 [[lng,lat],[lng,lat],...]
     this.points = [];

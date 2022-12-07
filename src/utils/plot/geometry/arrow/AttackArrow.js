@@ -16,6 +16,7 @@ class AttackArrow {
     this.neckHeightFactor = 0.85;
     this.neckWidthFactor = 0.15;
     this.headTailFactor = 0.8;
+    this.fixPointCount = 3;
     this.options = params || {};
     // 动态绘制点 [[lng,lat],[lng,lat],...]
     this.points = [];

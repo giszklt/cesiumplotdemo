@@ -1,7 +1,8 @@
 <template>
   <div id="cesiumContainer" ref="map">
-    <div class="demo-map_menu" ref="mapmenu" v-show="mapMenuShow" @click="getLocationInfo">
-      <div class="demo-map_menuItem">获取地点信息</div>
+    <div class="demo-map_menu" ref="mapmenu" v-show="mapMenuShow">
+      <div class="demo-map_menuItem"  @click="getLocationInfo">获取地点信息</div>
+      <div class="demo-map_menuItem">编辑</div>
     </div>
     <div class="demo-map_location">
       <div class="demo-map_locationItem" v-for="(item, index) in locations" :key="index">
@@ -14,7 +15,6 @@
 
 <script>
 import * as Cesium from "../../public/Cesium/Cesium";
-import CesiumPlot from "@/utils/plot";
 import {getLocationInfo} from "@/api/map";
 
 export default {
@@ -25,6 +25,7 @@ export default {
       locations: ["经度", "纬度", "高度"],
       moveLocation: [null, null, null],
       mapMenuShow: false,
+      isDraw:false,
     }
   },
   methods: {
@@ -59,7 +60,9 @@ export default {
       }
     },
     onMouseRightClick(e) {
-      this.mapMenuShow = true;
+      if (!this.isDraw){
+        this.mapMenuShow = true;
+      }
       this.$refs.mapmenu.style.left = e.position.x + "px";
       this.$refs.mapmenu.style.top = e.position.y + "px";
     },
@@ -88,6 +91,7 @@ export default {
     }
   },
   mounted() {
+    Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkM2U3YmMyOS0xNjAxLTRhMjAtOTRkZi0xNzQ3NTQ2YTNmNGIiLCJpZCI6Njk3MTEsImlhdCI6MTYzNDEwNDc4NX0.UB8L0lR4rQixyIenng8k6bONubEBu1QHy0zXmNV6wX4"
     Cesium.Camera.DEFAULT_VIEW_FACTOR = 1.2;
     this.lastMouseX = -1
     this.lastMouseY = -1
@@ -110,13 +114,13 @@ export default {
       fullscreenButton: false,
       sceneMode: Cesium.SceneMode.SCENE3D,
       // 连接地图服务
-      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-        // url: window.mapUrl + ":9109/map/?z={z}&x={x}&y={y}",
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        tilingScheme: new Cesium.WebMercatorTilingScheme(),
-        maximumLevel: 7,
-        show: false
-      }),
+      // imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+      //   // url: window.mapUrl + ":9109/map/?z={z}&x={x}&y={y}",
+      //   url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+      //   tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      //   maximumLevel: 7,
+      //   show: false
+      // }),
     });
 
     // 将三维球定位到中国区域
@@ -133,7 +137,7 @@ export default {
     viewer.scene.postProcessStages.fxaa.enabled = true;
     //
     //
-    // plot = new CesiumPlot(viewer, {
+    // plot = new Cesium Plot(viewer, {
     //   zoomToExtent: false
     // });
     let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -152,23 +156,6 @@ export default {
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     handler.setInputAction(this.onMouseRightClick, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-    //实时获取坐标
-    // handler.setInputAction(function (movement) {
-    //   let ellipsoid = viewer.scene.globe.ellipsoid;
-    //   let cartesian = viewer.camera.pickEllipsoid(movement.endPosition, ellipsoid);
-    //   //获取高度
-    //   let height = viewer.camera.positionCartographic.height.toFixed(2);
-    //   if (cartesian) {
-    //     //将笛卡尔坐标转换为地理坐标
-    //     let cartographic = ellipsoid.cartesianToCartographic(cartesian);
-    //     //将弧度转为度的十进制度表示
-    //     let longitude = Cesium.Math.toDegrees(cartographic.longitude);
-    //     let latitude = Cesium.Math.toDegrees(cartographic.latitude);
-    //     self.moveLocation = [longitude.toFixed(5), latitude.toFixed(5), height];
-    //   } else {
-    //     self.moveLocation = [null, null, height];
-    //   }
-    // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
     this.viewer = viewer
     this.$emit("ready", viewer)
     viewer._element.addEventListener('mousemove', this.onMouseMove, false)
@@ -195,6 +182,10 @@ export default {
     font-size: 12px;
     color: #e9eaed;
     cursor: pointer;
+    .demo-map_menuItem{
+      border: 1px solid rgba(255,255,255,0.5);
+      text-align: center;
+    }
   }
 
   .demo-map_location {

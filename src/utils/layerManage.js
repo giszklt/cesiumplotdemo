@@ -1,5 +1,4 @@
 import * as Cesium from "../../public/Cesium/Cesium";
-import {forEach} from "core-js/stable/dom-collections"
 import allMunicipality from "@/assets/vectorData/allMunicipality.json"
 
 export default {

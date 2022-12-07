@@ -28,6 +28,8 @@ const TAILED_SQUAD_COMBAT = "TailedSquadCombat";
 const RECTFLAG = "RectFlag";
 const TRIANGLEFLAG = "TriangleFlag";
 const CURVEFLAG = "CurveFlag";
+const RADAR = "Radar";
+const PICTURE = "Picture"
 export {
   TEXTAREA,
   ARC,
@@ -55,5 +57,7 @@ export {
   SQUAD_COMBAT,
   RECTFLAG,
   TRIANGLEFLAG,
-  CURVEFLAG
+  CURVEFLAG,
+  RADAR,
+  PICTURE
 };

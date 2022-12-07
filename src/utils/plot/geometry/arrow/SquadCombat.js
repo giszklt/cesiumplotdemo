@@ -17,6 +17,7 @@ class SquadCombat extends AttackArrow {
     this.neckHeightFactor = 0.85;
     this.neckWidthFactor = 0.15;
     this.tailWidthFactor = 0.1;
+    this.fixPointCount = 2;
     if (points && points.length > 0) {
       this.setPoints(points);
     } else if (coordinates && coordinates.length > 0) {

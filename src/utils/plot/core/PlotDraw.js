@@ -151,7 +151,11 @@ class PlotDraw {
         return new Plots.TriangleFlag([], points, params);
       case PlotTypes.CURVEFLAG:
         return new Plots.CurveFlag([], points, params);
-      /** 
+      case PlotTypes.RADAR:
+        return new Plots.Radar([], points, params);
+      case PlotTypes.PICTURE:
+        return new Plots.Picture([], points, params);
+      /**
       case PlotTypes.PENNANT:
         return new Plots.Pennant([], points, params);
       */
@@ -196,7 +200,7 @@ class PlotDraw {
         });
         that.points.push([lng, lat]);
         that.plot.setPoints(that.points);
-        if (that.plot.getPlotType() === PlotTypes.POINT) {
+        if (that.plot.getPlotType() === PlotTypes.POINT || that.plot.single) {
           that.handler.destroy();
           fun(1);
         }
@@ -246,6 +250,12 @@ class PlotDraw {
     // eslint-disable-next-line no-unused-vars
     that.handler.setInputAction(function(e) {
       if (that.handler) {
+        if (that.plot.points.length <that.plot.fixPointCount) {
+          let entities = that.plot.getEntities();
+          entities.forEach((entity) => {
+            that.plotDataSource.entities.remove(entity);
+          });
+        }
         that.handler.destroy();
         fun(1);
       }
