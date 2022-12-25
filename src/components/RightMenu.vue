@@ -68,7 +68,7 @@
             </el-form>
           </div>
         </div>
-        <div class="demo-layerManage_tree" v-show="layerManagerShow" v-if="false">
+        <div class="demo-layerManage_tree" v-show="layerManagerShow" v-if="true">
           <el-tree
               :data="layerDisplayData"
               show-checkbox
@@ -232,6 +232,7 @@ export default {
       if (index == 0) {
         this.viewer.scene.morphTo3D(0);
         this.$emit("logicLayer", false);
+
         this.$refs.layerDisplayTree.setCheckedKeys(tempClickedKeys);
       } else if (index == 1) {
         this.perspectiveShow = false;
@@ -304,7 +305,7 @@ export default {
         // this.viewer.scene.screenSpaceCameraController.enableTranslate = false
         //
         // this.viewer.scene.screenSpaceCameraController.enableTilt = false;
-        this.viewer.scene.screenSpaceCameraController.enableZoom = false
+        // this.viewer.scene.screenSpaceCameraController.enableZoom = false
         this.viewer.camera.flyTo(option)
       }
     },
@@ -440,8 +441,10 @@ export default {
     top: 70px;
     width: auto;
     text-align: center;
-    .demo-perspective_panel{
+
+    .demo-perspective_panel {
       width: 250px;
+
       .demo-perspective_inputPanle {
         width: 180px;
         margin: 5px auto;
@@ -464,6 +467,7 @@ export default {
         }
       }
     }
+
     .el-icon-close {
       font-size: 16px;
       position: absolute;
@@ -477,13 +481,10 @@ export default {
     }
 
     .demo-layerManage_tree {
-      margin: 6px;
+      margin: 6px 6px 6px 0;
 
       .el-tree {
         border-radius: 5px;
-        .el-tree-node__expand-icon{
-          display: none;
-        }
       }
     }
   }

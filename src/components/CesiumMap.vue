@@ -1,8 +1,11 @@
 <template>
   <div id="cesiumContainer" ref="map">
     <div class="demo-map_menu" ref="mapmenu" v-show="mapMenuShow">
-      <div class="demo-map_menuItem"  @click="getLocationInfo">获取地点信息</div>
-      <div class="demo-map_menuItem">编辑</div>
+      <div class="demo-map_menuItem" @click="getLocationInfo">
+        <i class="el-icon-search"></i>获取地点信息
+      </div>
+      <div class="demo-map_menuItem" @click="editPlot">
+        <i class="el-icon-edit"></i>编辑</div>
     </div>
     <div class="demo-map_location">
       <div class="demo-map_locationItem" v-for="(item, index) in locations" :key="index">
@@ -25,7 +28,7 @@ export default {
       locations: ["经度", "纬度", "高度"],
       moveLocation: [null, null, null],
       mapMenuShow: false,
-      isDraw:false,
+      isDraw: false,
     }
   },
   methods: {
@@ -37,7 +40,6 @@ export default {
       if (clientX === this.lastMouseX && clientY === this.lastMouseY) {
         return
       }
-      this.mapMenuShow = false;
       this.lastMouseX = clientX
       this.lastMouseY = clientY
 
@@ -60,11 +62,17 @@ export default {
       }
     },
     onMouseRightClick(e) {
-      if (!this.isDraw){
+      if (!this.isDraw) {
         this.mapMenuShow = true;
       }
       this.$refs.mapmenu.style.left = e.position.x + "px";
       this.$refs.mapmenu.style.top = e.position.y + "px";
+    },
+    onMouseLeftClick(e) {
+      this.mapMenuShow = false;
+    },
+    editPlot(){
+
     },
     getLocationInfo() {
       this.$notify.closeAll();
@@ -84,14 +92,14 @@ export default {
             position: 'bottom-right',
             offset: 20,
             duration: 0,
-            customClass:"demo-map_locationInfo"
+            customClass: "demo-map_locationInfo"
           })
         }
       })
-    }
+    },
   },
   mounted() {
-    Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkM2U3YmMyOS0xNjAxLTRhMjAtOTRkZi0xNzQ3NTQ2YTNmNGIiLCJpZCI6Njk3MTEsImlhdCI6MTYzNDEwNDc4NX0.UB8L0lR4rQixyIenng8k6bONubEBu1QHy0zXmNV6wX4"
+    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkM2U3YmMyOS0xNjAxLTRhMjAtOTRkZi0xNzQ3NTQ2YTNmNGIiLCJpZCI6Njk3MTEsImlhdCI6MTYzNDEwNDc4NX0.UB8L0lR4rQixyIenng8k6bONubEBu1QHy0zXmNV6wX4"
     Cesium.Camera.DEFAULT_VIEW_FACTOR = 1.2;
     this.lastMouseX = -1
     this.lastMouseY = -1
@@ -155,7 +163,10 @@ export default {
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+    viewer.camera.moveStart.addEventListener(this.onMouseLeftClick);
     handler.setInputAction(this.onMouseRightClick, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    handler.setInputAction(this.onMouseLeftClick, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    handler.setInputAction(this.onMouseLeftClick, Cesium.ScreenSpaceEventType.WHEEL);
     this.viewer = viewer
     this.$emit("ready", viewer)
     viewer._element.addEventListener('mousemove', this.onMouseMove, false)
@@ -177,14 +188,31 @@ export default {
     position: absolute;
     z-index: 1;
     left: 1000px;
-    padding: 5px;
+    padding: 2px;
     background: rgba(5, 5, 65, 0.4);
     font-size: 12px;
     color: #e9eaed;
     cursor: pointer;
-    .demo-map_menuItem{
-      border: 1px solid rgba(255,255,255,0.5);
-      text-align: center;
+
+    .demo-map_menuItem {
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 0 5px;
+      line-height: 20px;
+
+      i {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background: #1DD7D366;
+      }
+    }
+
+    //.demo-map_menuItem:first-child {
+    //  border-bottom: none;
+    //}
+    .demo-map_menuItem:nth-child(n+2) {
+      border-top: none;
     }
   }
 
@@ -209,7 +237,7 @@ export default {
 </style>
 <style>
 
-.demo-map_locationInfo{
+.demo-map_locationInfo {
   padding-right: 42px !important;
   right: 8px !important;
 }
