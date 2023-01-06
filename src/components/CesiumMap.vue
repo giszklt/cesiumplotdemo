@@ -5,7 +5,8 @@
         <i class="el-icon-search"></i>获取地点信息
       </div>
       <div class="demo-map_menuItem" @click="editPlot">
-        <i class="el-icon-edit"></i>编辑</div>
+        <i class="el-icon-edit"></i>编辑
+      </div>
     </div>
     <div class="demo-map_location">
       <div class="demo-map_locationItem" v-for="(item, index) in locations" :key="index">
@@ -13,6 +14,32 @@
         <span>：{{ moveLocation[index] }}</span>
       </div>
     </div>
+    <transition name="el-zoom-in-left" size="mini">
+      <div class="demo-map_editPanel" v-show="editPanel">
+        <i class="el-icon-close" @click="closeEdit"></i>
+        <el-form ref="form" :model="form" label-width="auto" size="mini">
+          <el-form-item label="尺寸：">
+            <el-radio-group v-model="form.scale">
+              <el-radio-button label="等比"></el-radio-button>
+              <el-radio-button label="不等比"></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="尺寸：">
+            <el-slider v-model="form.size"></el-slider>
+          </el-form-item>
+          <el-form-item label="高度：">
+            <el-input v-model="form.height">
+              <template slot="append">m</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="俯仰角：">
+            <el-input v-model="form.angle">
+              <template slot="append">°</template>
+            </el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -28,6 +55,13 @@ export default {
       locations: ["经度", "纬度", "高度"],
       moveLocation: [null, null, null],
       mapMenuShow: false,
+      editPanel: false,
+      form: {
+        scale: "不等比",
+        size:20,
+        height: 0,
+        angle: 0
+      },
       isDraw: false,
     }
   },
@@ -71,8 +105,12 @@ export default {
     onMouseLeftClick(e) {
       this.mapMenuShow = false;
     },
-    editPlot(){
-
+    editPlot() {
+      this.mapMenuShow = false;
+      this.editPanel = true;
+    },
+    closeEdit() {
+      this.editPanel = false;
     },
     getLocationInfo() {
       this.$notify.closeAll();
@@ -230,6 +268,42 @@ export default {
     .demo-map_locationItem {
       margin: 0 2px;
       min-width: 120px;
+    }
+  }
+
+  .demo-map_editPanel {
+    .el-icon-close {
+      margin-left: 92%;
+      cursor: pointer;
+    }
+
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 7px;
+    left: 10px;
+    bottom: 10px;
+    border-radius: 5px;
+
+    .el-form-item {
+      margin-bottom: 10px;
+      .el-input {
+        width: 130px;
+      }
+
+      ::v-deep(.el-slider__runway) {
+        margin: 11px 0;
+      }
+
+      ::v-deep(.el-input__inner) {
+        text-align: right;
+      }
+
+      ::v-deep(.el-input-group__append) {
+        min-width: 36px;
+        text-align: center;
+        padding: 0;
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
     <div class="demo-title_panel">
       <span>标绘功能演示</span>
     </div>
-    <left-menu ref="leftMenu" @drawPlot="noticeDrawPlot"></left-menu>
+    <left-menu ref="leftMenu" @drawPlot="noticeDrawPlot" v-show="mapShow"></left-menu>
     <right-menu ref="rightMenu" @logicLayer="logicLayerCreated"></right-menu>
     <cesium-map ref="cesiumMap" v-show="mapShow" @ready="mapCreated"></cesium-map>
     <logic-map v-if="!mapShow"></logic-map>
