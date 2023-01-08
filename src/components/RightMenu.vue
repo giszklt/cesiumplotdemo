@@ -271,8 +271,8 @@ export default {
           option = {
             destination: Cesium.Cartesian3.fromDegrees(Number(this.perspectiveForm.inputLon), Number(this.perspectiveForm.inputLat), Number(this.perspectiveForm.inputHeight)),
             orientation: {
-              heading: 0.34,
-              pitch: -0.3,
+              heading: 0,
+              pitch:  -(Math.PI / 2),
               roll: 0
             },
             duration: 2
@@ -282,7 +282,7 @@ export default {
           option = {
             destination: Cesium.Cartesian3.fromDegrees(Number(this.perspectiveForm.inputLon), Number(this.perspectiveForm.inputLat), 1),
             orientation: {
-              heading: 0.34,
+              heading: 0,
               pitch: 0,
               roll: 0
             },
@@ -294,7 +294,7 @@ export default {
         option = {
           destination: Cesium.Cartesian3.fromDegrees(28, 56, 200000000),
           orientation: {
-            heading: 7,
+            heading: Math.PI / 4,
             pitch: 5,
             roll: 5
           },

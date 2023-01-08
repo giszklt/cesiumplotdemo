@@ -4,7 +4,7 @@
       <div class="demo-map_menuItem" @click="getLocationInfo">
         <i class="el-icon-search"></i>获取地点信息
       </div>
-      <div class="demo-map_menuItem" @click="editPlot">
+      <div class="demo-map_menuItem" @click="editPlot" v-show="editPlotShow">
         <i class="el-icon-edit"></i>编辑
       </div>
     </div>
@@ -56,6 +56,7 @@ export default {
       moveLocation: [null, null, null],
       mapMenuShow: false,
       editPanel: false,
+      editPlotShow:false,
       form: {
         scale: "不等比",
         size:20,
@@ -96,6 +97,12 @@ export default {
       }
     },
     onMouseRightClick(e) {
+      const viewer = this.viewer;
+      let pick = viewer.scene.pick(e.position);
+      this.editPlotShow = false
+      if (Cesium.defined(pick) && pick.id) {
+          this.editPlotShow = true
+      }
       if (!this.isDraw) {
         this.mapMenuShow = true;
       }
